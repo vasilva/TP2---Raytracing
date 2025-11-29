@@ -37,7 +37,6 @@ static std::string sOutputFilename = "";
 // Track which effects are enabled
 static bool sSoftShadowsEnabled = false;
 static bool sDOFEnabled = false;
-static bool sMotionBlurEnabled = false;
 
 // Forward declaration
 static void writePPM(const std::string &outputFilename);
@@ -171,17 +170,6 @@ static void keyboard(unsigned char key, int, int)
 		}
 		break;
 
-	case '3': // Toggle motion blur
-		if (sRaytracer)
-		{
-			sMotionBlurEnabled = !sMotionBlurEnabled;
-			sRaytracer->setMotionBlur(sMotionBlurEnabled, 0.5f);
-			sNeedRender = true;
-			sPpmSaved = false;
-			std::cout << "Motion blur " << (sMotionBlurEnabled ? "enabled" : "disabled") << std::endl;
-		}
-		break;
-
 	default:
 		break;
 	}
@@ -228,8 +216,6 @@ static void writePPM(const std::string &outputFilename)
 		finalFilename = baseName + "_soft" + extension;
 	else if (sDOFEnabled)
 		finalFilename = baseName + "_dof" + extension;
-	else if (sMotionBlurEnabled)
-		finalFilename = baseName + "_blur" + extension;
 	// If no effects, use original filename
 
 	// Write PPM file
