@@ -65,7 +65,7 @@ static void display(void)
 			renderRaytracedImage();
 			sNeedRender = false;
 			sFramebufferValid = true;
-			
+
 			// Save PPM after first render
 			if (!sPpmSaved && !sOutputFilename.empty())
 			{
@@ -93,21 +93,20 @@ static void idle(void) { glutPostRedisplay(); }
 // GLUT reshape callback
 static void reshape(int w, int h)
 {
-	if (h == 0)
-		h = 1;
-	if (w == 0)
-		w = 1;
-
+	// Update framebuffer size
 	sImageWidth = std::max(1, w);
 	sImageHeight = std::max(1, h);
-	
+
 	// Safely resize framebuffer
-	size_t newSize = static_cast<size_t>(sImageWidth) * static_cast<size_t>(sImageHeight) * 3u;
+	size_t newSize = static_cast<size_t>(sImageWidth * sImageHeight * 3);
 	if (newSize > 0 && newSize < 100000000) // Sanity check: less than 100MB
 	{
-		try {
+		try
+		{
 			sFramebuffer.resize(newSize);
-		} catch (const std::exception& e) {
+		}
+		catch (const std::exception &e)
+		{
 			std::cerr << "Error resizing framebuffer: " << e.what() << std::endl;
 			sFramebuffer.clear();
 		}
@@ -117,11 +116,12 @@ static void reshape(int w, int h)
 	sNeedRender = true;
 	sFramebufferValid = false;
 
+	// Set viewport and projection
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	GLfloat aspect = (GLfloat)w / (GLfloat)h;
-	GLfloat fovY = sCamera ? sCamera->getFOV() : 60.0f;
+	GLfloat fovY = sCamera ? sCamera->getFOV() : 45.0f;
 	GLfloat nearDist = 0.1f;
 	GLfloat top = nearDist * tanf(fovY * PI / 360.0f);
 	GLfloat bottom = -top;
@@ -148,7 +148,7 @@ static void keyboard(unsigned char key, int, int)
 			sNeedRender = true;
 		std::cout << "Raytracing " << (sRaytraceEnabled ? "enabled." : "disabled.") << std::endl;
 		break;
-	
+
 	case '1': // Toggle soft shadows
 		if (sRaytracer)
 		{
@@ -159,7 +159,7 @@ static void keyboard(unsigned char key, int, int)
 			std::cout << "Soft shadows " << (sSoftShadowsEnabled ? "enabled" : "disabled") << std::endl;
 		}
 		break;
-	
+
 	case '2': // Toggle depth of field
 		if (sRaytracer)
 		{
@@ -170,7 +170,7 @@ static void keyboard(unsigned char key, int, int)
 			std::cout << "Depth of field " << (sDOFEnabled ? "enabled" : "disabled") << std::endl;
 		}
 		break;
-	
+
 	case '3': // Toggle motion blur
 		if (sRaytracer)
 		{
@@ -195,22 +195,19 @@ static void registerObjects(Camera *camera,
 	sCamera = camera;
 	sSurfaces = surfaces;
 	sLights = lights;
-	
+
 	// Create raytracer instance
 	if (sRaytracer)
 		delete sRaytracer;
 	sRaytracer = new Raytracer(camera, surfaces, lights);
-	
+
 	// ensure next display triggers render
 	sNeedRender = true;
 	sFramebufferValid = false;
 }
 
 // Set output filename for PPM
-static void setOutputFilename(const std::string &filename)
-{
-	sOutputFilename = filename;
-}
+static inline void setOutputFilename(const std::string &filename) { sOutputFilename = filename; }
 
 // Write the raytraced image to a PPM file
 static void writePPM(const std::string &outputFilename)
@@ -226,7 +223,7 @@ static void writePPM(const std::string &outputFilename)
 	size_t dotPos = finalFilename.find_last_of('.');
 	std::string baseName = (dotPos != std::string::npos) ? finalFilename.substr(0, dotPos) : finalFilename;
 	std::string extension = (dotPos != std::string::npos) ? finalFilename.substr(dotPos) : ".ppm";
-	
+
 	if (sSoftShadowsEnabled)
 		finalFilename = baseName + "_soft" + extension;
 	else if (sDOFEnabled)
@@ -234,7 +231,7 @@ static void writePPM(const std::string &outputFilename)
 	else if (sMotionBlurEnabled)
 		finalFilename = baseName + "_blur" + extension;
 	// If no effects, use original filename
-	
+
 	// Write PPM file
 	std::ofstream outFile("data/output/" + finalFilename, std::ios::binary);
 	if (!outFile)

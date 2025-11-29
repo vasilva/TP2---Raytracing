@@ -253,11 +253,14 @@ inline Vec3 lerp(const Vec3& a, const Vec3& b, GLfloat alpha)
 // Output stream overloads
 inline std::ostream& operator<<(std::ostream& out, const Vec4& v)
 {
+	// Format: (x, y, z, w)
 	out << "(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")";
 	return out;
 }
 inline std::ostream& operator<<(std::ostream& out, const Vec3& v)
 {
+	// Format: (x, y, z)
 	out << "(" << v.x << ", " << v.y << ", " << v.z << ")";
 	return out;
 }
+// End of vecFunctions.h

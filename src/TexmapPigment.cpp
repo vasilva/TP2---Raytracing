@@ -1,6 +1,6 @@
+#include "../include/TexmapPigment.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../include/stb_image.h"
-#include "../include/TexmapPigment.h"
 
 std::ostream &operator<<(std::ostream &out, const TexmapPigment &tp)
 {

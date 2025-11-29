@@ -27,63 +27,63 @@ static void print(const Camera &camera,
 				  const std::vector<std::unique_ptr<Object>> &surfaces)
 {
 	// Print camera
-	std::cout << camera << std::endl;
+	std::cout << camera << "\n";
 
 	// Print lights
 	for (const auto &light : lights)
-		std::cout << light << std::endl;
+		std::cout << light << "\n";
 
 	// Print pigments
 	for (const auto &pigment : pigments)
 	{
 		if (pigment->type == Pigment::SOLID)
-			std::cout << *(static_cast<SolidPigment *>(pigment.get())) << std::endl;
+			std::cout << *(static_cast<SolidPigment *>(pigment.get())) << "\n";
 		else if (pigment->type == Pigment::CHECKER)
-			std::cout << *(static_cast<CheckerPigment *>(pigment.get())) << std::endl;
+			std::cout << *(static_cast<CheckerPigment *>(pigment.get())) << "\n";
 		else if (pigment->type == Pigment::TEXMAP)
-			std::cout << *(static_cast<TexmapPigment *>(pigment.get())) << std::endl;
+			std::cout << *(static_cast<TexmapPigment *>(pigment.get())) << "\n";
 	}
 
 	// Print finishes
 	for (const auto &finish : finishes)
-		std::cout << *finish << std::endl;
+		std::cout << *finish << "\n";
 
 	// Print surfaces
 	for (const auto &surface : surfaces)
 	{
 		if (surface->getType() == Object::Sphere)
-			std::cout << *(static_cast<Sphere *>(surface.get())) << std::endl;
+			std::cout << *(static_cast<Sphere *>(surface.get())) << "\n";
 		else if (surface->getType() == Object::Polyhedron)
-			std::cout << *(static_cast<Polyhedron *>(surface.get())) << std::endl;
+			std::cout << *(static_cast<Polyhedron *>(surface.get())) << "\n";
 	}
 }
 
-int main(int argc, char *argv[])
+// Parse command-line arguments
+static void argsParse(int argc, char *argv[],
+					  std::string &inputFilename,
+					  std::string &outputFilename,
+					  int &windowWidth,
+					  int &windowHeight)
 {
 	// Command-line args: inputFile outputFile [width height]
 	if (argc < 2)
 	{
 		std::cerr << "Usage: " << argv[0] << " <input-file> <output-file> [width] [height]" << std::endl;
-		return 1;
+		exit(1);
 	}
 
 	// Parse command-line arguments
-	std::string inputFilename = argv[1];
-	std::string outputFilename;
-	int windowWidth = 800;
-	int windowHeight = 600;
+	inputFilename = argv[1];
 
 	if (argc >= 3)
-	{
 		outputFilename = argv[2];
-	}
+
 	else
 	{
 		// Remove .txt extension and add .ppm
 		size_t dotPos = inputFilename.find_last_of('.');
 		if (dotPos != std::string::npos && inputFilename.substr(dotPos) == ".txt")
 			outputFilename = inputFilename.substr(0, dotPos) + ".ppm";
-
 		else
 			outputFilename = inputFilename + ".ppm";
 	}
@@ -112,13 +112,23 @@ int main(int argc, char *argv[])
 			windowHeight = 600;
 		}
 	}
+}
+
+int main(int argc, char *argv[])
+{
+	// Parse command-line arguments
+	int windowWidth = 800;
+	int windowHeight = 600;
+	std::string inputFilename;
+	std::string outputFilename;
+	argsParse(argc, argv, inputFilename, outputFilename, windowWidth, windowHeight);
 
 	// Glut initialization
 	glutInit(&argc, argv);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutCreateWindow("Raytracer - Scene Reader Test");
+	glutCreateWindow("TP2 - Raytracing");
 
 	// Read scene from input file
 	Camera camera;
@@ -138,7 +148,7 @@ int main(int argc, char *argv[])
 	// Setup framebuffer dimensions
 	sImageWidth = windowWidth;
 	sImageHeight = windowHeight;
-	
+
 	// Set output filename for saving after first render
 	setOutputFilename(outputFilename);
 

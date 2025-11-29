@@ -585,8 +585,8 @@ def create_example_scene():
     )
 
     # Finishes
-    matte = scene.add_finish(SurfaceFinish(ka=0.3, kd=0.7, ks=0.0, alpha=1))
-    shiny = scene.add_finish(SurfaceFinish(ka=0.2, kd=0.5, ks=0.3, alpha=50, kr=0.3))
+    matte = scene.add_finish(SurfaceFinish(ka=0.3, kd=0.4, ks=0.0, alpha=1, kr=0.3))
+    shiny = scene.add_finish(SurfaceFinish(ka=0.11, kd=0.11, ks=0.3, alpha=1000, kr=0.7))
 
     # Objects
     # Ground plane (large sphere)
